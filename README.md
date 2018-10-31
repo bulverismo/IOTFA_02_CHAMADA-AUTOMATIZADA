@@ -10,7 +10,5 @@ Deverá sempre ser mantido também aqui uma versão modificada do código para s
 ######### --- OVERVIEW DO PROJETO --- ############
 
 Projeto idealizado pelo Professor Rafael Rehn dentro do Grupo de Estudos Sobre Internet das Coisas FADERGS - IOTFA, que tem como participantes atuais do grupo:
-José Américo Lacerda Félix
-Gustavo Dariano
-Emerson Correa
+José Américo Lacerda Félix, Gustavo Dariano e Emerson Correa
 
