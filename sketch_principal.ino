@@ -1,3 +1,5 @@
+// Sketch principal como esta dentro do prototipo
+
 #include <Adafruit_Fingerprint.h>
 #include <SD.h>
 #include <Wire.h>
