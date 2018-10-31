@@ -54,9 +54,6 @@ void loop() {
 
 exibirAtualSelecionado(posicao);
 posicao++;
-if (posicao == 111){
-  posicao = 1;
-}
 }
 
 
