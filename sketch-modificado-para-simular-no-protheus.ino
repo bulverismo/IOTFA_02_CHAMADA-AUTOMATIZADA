@@ -16,7 +16,7 @@
  modified 9 Apr 2012
  by Tom Igoe
 
- his example code is in the public domain.
+ This example code is in the public domain.
 
  */
 
@@ -51,9 +51,8 @@ void setup() {
 }
 
 void loop() {
-uint8_t i = exibirAtualSelecionado(posicao);
-Serial.print(" ");
-Serial.println(i);
+
+exibirAtualSelecionado(posicao);
 posicao++;
 }
 
@@ -70,15 +69,14 @@ void contarAlunos(){
       c = dataFile.read();
       if(c == '\r'){
         indexAtual = indexAtual+1;
-      }
+        }
     }
-  }
 
-  dataFile.close();  // fecha o arquivo de texto que havia sido aberto
+    dataFile.close();  // fecha o arquivo de texto que havia sido aberto
 }
 
 uint8_t exibirAtualSelecionado(int indexEscolhido)
-{
+ {
 
 // Função que printa o aluno que esta no index selecionado
 
@@ -86,7 +84,7 @@ uint8_t exibirAtualSelecionado(int indexEscolhido)
   int indexAtual = 0;
 
   while (dataFile.available()) {
-      char c = dataFile.read();
+      c = dataFile.read();
       if(c == '\r'){
         indexAtual++;
         if(indexAtual == indexEscolhido){
@@ -116,7 +114,7 @@ uint8_t exibirAtualSelecionado(int indexEscolhido)
     char tmpChar[3];
     int cont = 0;
     while(dataFile.available()){
-      char c = dataFile.read();
+      c = dataFile.read();
       if(isDigit(c)){
         tmpChar[cont] = c;
         cont++;
@@ -135,4 +133,8 @@ uint8_t exibirAtualSelecionado(int indexEscolhido)
     dataFile.close();  // fecha o arquivo de texto que havia sido aberto
 
     return convertido; // retorna id ja no formato uint8_t
+  }
+  else {
+    Serial.println("error opening datalog.txt"); // printa erro se nao conseguir abrir o arquivo
+  }
 }
