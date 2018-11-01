@@ -107,7 +107,7 @@ lcd.backlight();
     Serial.println(F("MODULO DE DEMONSTRACAO"));
     delay(2000);
 // ***************************
-
+ 
 }
 
 void loop() {
