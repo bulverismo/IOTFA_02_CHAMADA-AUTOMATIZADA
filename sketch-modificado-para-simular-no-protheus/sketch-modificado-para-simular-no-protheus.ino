@@ -16,6 +16,8 @@ uint8_t botaoAcima = 5;
 uint8_t botaoAbaixo = 6;
 uint8_t botaoSeleciona = 4;
 
+String nomeAluno = "";
+
 boolean selecionar = false;
 
 void setup() {
@@ -83,15 +85,69 @@ Serial.println(i);
       Serial.print("aluno ");
       exibirAtualSelecionado(posicao);
       Serial.println(" foi selecionado");
-      Serial.print("Numero de IDS cadastradas ");
-      Serial.println(calcIdParaCadastro());
-      //deseleciona
+      if (exibirAtualSelecionado(posicao)){
+        Serial.println("aluno ja tem uma id para si");
+        selecionar = false;
+      }else{
+      Serial.print("Sera cadastrado no ID ");
+      int idNova = calcIdParaCadastro()+1;
+      Serial.println(idNova);
+      addIdAoArquivo(posicao);      
+      //deseleciona      
       selecionar = false;
+      }
     }
-    
     delay(180);
 
 }
+
+
+int addIdAoArquivo(int indexParaCadastro)
+{
+  File dataFile = SD.open("lista.txt");
+  int indexAtual = 0;
+// Parte da função que conta quantos alunos tem na lista
+
+  if (dataFile) {
+    char c;
+    while (dataFile.available()) {
+      c = dataFile.read();
+      if(c == '\r'){
+        indexAtual = indexAtual+1;
+        if (indexAtual == indexParaCadastro){
+         
+        Serial.println("bloco que junta a id");
+          
+        }else{
+          unsigned long posiAtualLista1 = dataFile.position();
+          dataFile.close();
+          dataFile = SD.open("lista2.txt", FILE_WRITE);
+          if (dataFile) {
+            dataFile.println(nomeAluno);
+            dataFile.close();
+            Serial.println("PRINTADO NO ARQUIVO NOVO.");
+         } else {
+            Serial.println("error opening LISTA2.txt");
+         }
+            dataFile = SD.open("lista.txt");
+            dataFile.seek(posiAtualLista1);
+            nomeAluno = "";
+        }
+      }
+      if(c != '\r'){
+        
+       nomeAluno += c;
+      }
+    }
+  }
+  dataFile.close();  // fecha o arquivo de texto que havia sido aberto
+  return indexAtual;
+}
+
+
+
+
+
 
 int calcIdParaCadastro(){
   int contador = 1;
