@@ -46,7 +46,6 @@ void setup() {
 
   Serial.print("----->>> DEBUG :  ");
   Serial.println(totalAlunosNaLista);
-
 }
 
 void loop() {
@@ -92,7 +91,7 @@ Serial.println(i);
       Serial.print("Sera cadastrado no ID ");
       int idNova = calcIdParaCadastro()+1;
       Serial.println(idNova);
-      addIdAoArquivo(posicao);      
+      addIdAoArquivo(posicao,idNova);      
       //deseleciona      
       selecionar = false;
       }
@@ -102,7 +101,7 @@ Serial.println(i);
 }
 
 
-int addIdAoArquivo(int indexParaCadastro)
+int addIdAoArquivo(int indexParaCadastro,int idParaCadastro)
 {
   File dataFile = SD.open("lista.txt");
   int indexAtual = 0;
@@ -115,15 +114,49 @@ int addIdAoArquivo(int indexParaCadastro)
       if(c == '\r'){
         indexAtual = indexAtual+1;
         if (indexAtual == indexParaCadastro){
-         
-        Serial.println("bloco que junta a id");
+          
+          unsigned long posiAtualLista2 = dataFile.position();
+          dataFile.close();
+
+          dataFile = SD.open("lista2.txt", FILE_WRITE);
+          
+          String adiciona = "#" + String(idParaCadastro); 
+          nomeAluno += adiciona;
+          
+          Serial.println("estou aqui 1");
+
+          if (dataFile){
+
+            //dataFile.print('\r');
+
+            dataFile.print(nomeAluno);
+            Serial.println("estou aqui 2");
+            
+          }else{
+            Serial.println("nao conseguiu abrir o arquivo de texto lista2.txt ");
+          }
+
+  
+          dataFile.close();
+
+
+          dataFile = SD.open("lista.txt");
+          dataFile.seek(posiAtualLista2);
+          
+          Serial.println(F("Nome do aluno printado com sucesso"));
+          
+          nomeAluno = "";
           
         }else{
           unsigned long posiAtualLista1 = dataFile.position();
           dataFile.close();
           dataFile = SD.open("lista2.txt", FILE_WRITE);
           if (dataFile) {
-            dataFile.println(nomeAluno);
+            dataFile.print(nomeAluno);
+            dataFile.print('\r');
+            /*if (indexAtual == totalAlunosNaLista){
+              dataFile.print('\r');
+            }*/
             dataFile.close();
             Serial.println("PRINTADO NO ARQUIVO NOVO.");
          } else {
@@ -135,7 +168,6 @@ int addIdAoArquivo(int indexParaCadastro)
         }
       }
       if(c != '\r'){
-        
        nomeAluno += c;
       }
     }
