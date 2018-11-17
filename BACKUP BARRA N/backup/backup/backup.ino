@@ -3,7 +3,7 @@
  *
  * Funcoes modificadas e codigo sendo recriado do zero
  *
- *
+ *44
  */
 
 #include <SPI.h>
@@ -54,8 +54,8 @@ uint8_t i = exibirAtualSelecionado(posicao);
 Serial.print(" ");
 Serial.println(i);
    while(1){
-    
-    
+
+
         if(digitalRead(botaoAcima) == HIGH){
           if(posicao == totalAlunosNaLista){
             posicao = 1;
@@ -76,9 +76,9 @@ Serial.println(i);
             selecionar = true;
             break;
           }
-        
+
     }
-    
+
     if(selecionar){
       // bla
       Serial.print("aluno ");
@@ -91,8 +91,8 @@ Serial.println(i);
       Serial.print("Sera cadastrado no ID ");
       int idNova = calcIdParaCadastro()+1;
       Serial.println(idNova);
-      addIdAoArquivo(posicao,idNova);      
-      //deseleciona      
+      addIdAoArquivo(posicao,idNova);
+      //deseleciona
       selecionar = false;
       }
     }
@@ -114,41 +114,41 @@ int addIdAoArquivo(int indexParaCadastro,int idParaCadastro)
       if(c == '\n'){
         indexAtual = indexAtual+1;
         if (indexAtual == indexParaCadastro){
-          
+
           unsigned long posiAtualLista2 = dataFile.position();
           dataFile.close();
 
           dataFile = SD.open("lista2.txt", FILE_WRITE);
-          
-          String adiciona = "#" + String(idParaCadastro)+'\n'; 
-          
-          
+
+          String adiciona = "#" + String(idParaCadastro)+'\n';
+
+
           nomeAluno += adiciona;
-          
+
           Serial.println("estou aqui 1");
 
           if (dataFile){
-          
+
             //dataFile.print('\n');
 
             dataFile.print(nomeAluno);
             Serial.println("estou aqui 2");
-            
+
           }else{
             Serial.println("nao conseguiu abrir o arquivo de texto lista2.txt ");
           }
 
-  
+
           dataFile.close();
 
 
           dataFile = SD.open("lista.txt");
           dataFile.seek(posiAtualLista2);
-          
+
           Serial.println(F("Nome do aluno printado com sucesso"));
-          
+
           nomeAluno = "";
-          
+
         }else{
           unsigned long posiAtualLista1 = dataFile.position();
           dataFile.close();
@@ -179,44 +179,44 @@ int addIdAoArquivo(int indexParaCadastro,int idParaCadastro)
 
 
  // exclui antigo lista.txt
- 
+
   SD.remove("lista.txt");
-  
+
  // passa do lista2.txt para lista.txt
-  
+
   dataFile = SD.open("lista2.txt");
   indexAtual = 0;
 
   if (dataFile) {
     char c;
-    
+
     while (dataFile.available()) {
       c = dataFile.read();
-      
+
       if(c == '\n'){
         indexAtual = indexAtual+1;
-        
+
         unsigned long posiAtualLista1 = dataFile.position();
         dataFile.close();
-        
+
         dataFile = SD.open("lista.txt", FILE_WRITE);
-        
+
         if (dataFile) {
           dataFile.print(nomeAluno);
           dataFile.print('\n');
           dataFile.close();
-          
+
           Serial.println("PRINTADO NO ARQUIVO final.");
          } else {
             Serial.println("erro ao tentar abrir LISTA.txt");
          }
-             
+
            dataFile = SD.open("lista2.txt");
            dataFile.seek(posiAtualLista1);
            nomeAluno = "";
-           
+
         }
-        
+
         if(c != '\n'){
           nomeAluno += c;
         }
@@ -227,11 +227,11 @@ int addIdAoArquivo(int indexParaCadastro,int idParaCadastro)
 
 
  //exclui lista2.txt
- 
- 
+
+
   SD.remove("lista2.txt");
 
-  
+
   return indexAtual;
 }
 
