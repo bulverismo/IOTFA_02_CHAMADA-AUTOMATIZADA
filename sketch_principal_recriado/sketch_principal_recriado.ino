@@ -16,21 +16,23 @@ const PROGMEM Adafruit_Fingerprint finger = Adafruit_Fingerprint(&biometricoSeri
 void setup() {
 
 Serial.begin(9600);
-Serial.printn("Incializando Protótipo");
+Serial.println(F("Incializando Protótipo"));
 // *********************************
 
 lcd.init();
 lcd.backlight();
 
 // *********************************
-
+  Serial.println(F("Inicializando Leitor Biométrico"));
   exibeMsg(F("TESTANDO LEITOR BIOMETRICO"));
   // Definir a taxa de dados para a porta do serial do sensor
   finger.begin(57600);
   if (finger.verifyPassword()) { // teste para ver se detectou
     exibeMsg(F("SENSOR BIOMETRICO ENCONTRADO"));
+    Serial.println(F("SENSOR BIOMETRICO ENCONTRADO"));
   } else {
     exibeMsg(F("BIOMETRICO NAO DETECTADO"));
+    Serial.println(F("BIOMETRICO NAO DETECTADO"));
     while (1) { delay(1); } // trava o codigo pois ocorreu erro
   }
 
@@ -43,20 +45,29 @@ lcd.backlight();
   while (!SD.begin(chipSelect)) {
     while (1) {
       exibeMsg(F("INSIRA SD E REINICIE O MODULO"));
+      Serial.println(F("INSIRA SD E REINICIE O MODULO"));
       delay(10000);
     } // trava o codigo pois ocorreu erro
   }
   exibeMsg(F("CARTAO SD DETEC-TADO"));
-  buscarArquivoAlunos(); // Função para buscar dentro da raiz do sd o arquivo alunos.txt
+  Serial.println(F("CARTAO SD DETECTADO"));
 
 // *******************************
 
+int escolha = 0;
 
 }
 
+
+
 void loop() {
 
-  delay(100000000);
+  if (Serial.available() > 0) {
+    escolha = Serial.read();
+    Serial.print("I received: ");
+    Serial.println(incomingByte, DEC);
+  }
+
 }
 void registra(){
 
@@ -89,8 +100,6 @@ void buscarArquivoLista(){
     while (1) { delay(1); } // trava o codigo pois ocorreu erro
   }
 }
-
-
 
 void gerarLista(){
 
