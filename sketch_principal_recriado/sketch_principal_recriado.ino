@@ -53,6 +53,10 @@ lcd.backlight();
   Serial.println(F("CARTAO SD DETECTADO"));
 
 // *******************************
+  finger.getTemplateCount();
+  Serial.print("Sensor contains "); Serial.print(finger.templateCount); Serial.println(" templates");
+  Serial.println("Waiting for valid finger...");
+
 
 }
 
@@ -67,14 +71,25 @@ void loop() {
     //entra no módulo de cadastro de aluno
   }
 
-  if (/*detectar dedo*/){
+  //getFingerprintIDez();
+  int temAluno = getFingerprintIDez();
+
+  
+  if (temAluno){
     //módulo de registro
-    if (/*encontrou aluno*/){
-      //registra presença
-    }else{
-      // dedo não cadastrado
-    }
+    
+    Serial.print("aluno encontrado na ID: ");
+    Serial.print(temAluno);
+    Serial.println("Pode remover o dedo");
+    delay(100);
+    
+    //registra presença
+
+    SD.open
+    
   }
+  
+  delay(5);   
 
 }
 void registra(){
@@ -296,4 +311,96 @@ uint8_t getFingerprintEnroll(uint8_t idParaCadastro) {
 void tenteNovamente(){
     exibeMsg(F("TENTE NOVAMENTE"));
     delay(3000);
+}
+
+
+
+uint8_t getFingerprintID() {
+  uint8_t p = finger.getImage();
+  switch (p) {
+    case FINGERPRINT_OK:
+      Serial.println("Image taken");
+      break;
+    case FINGERPRINT_NOFINGER:
+      Serial.println("No finger detected");
+      return p;
+    case FINGERPRINT_PACKETRECIEVEERR:
+      Serial.println("Communication error");
+      return p;
+    case FINGERPRINT_IMAGEFAIL:
+      Serial.println("Imaging error");
+      return p;
+    default:
+      Serial.println("Unknown error");
+      return p;
+  }
+
+  // OK success!
+
+  p = finger.image2Tz();
+  switch (p) {
+    case FINGERPRINT_OK:
+      Serial.println(F("Image converted"));
+      break;
+    case FINGERPRINT_IMAGEMESS:
+      Serial.println(F("Image too messy"));
+      return p;
+    case FINGERPRINT_PACKETRECIEVEERR:
+      Serial.println(F("Communication error"));
+      return p;
+    case FINGERPRINT_FEATUREFAIL:
+      Serial.println(F("Could not find fingerprint features"));
+      return p;
+    case FINGERPRINT_INVALIDIMAGE:
+      Serial.println(F("Could not find fingerprint features"));
+      return p;
+    default:
+      Serial.println(F("Unknown error"));
+      return p;
+  }
+  
+  // OK converted!
+  p = finger.fingerFastSearch();
+  if (p == FINGERPRINT_OK) {
+    Serial.println(F("Found a print match!"));
+  } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
+    Serial.println(F("Communication error"));
+    return p;
+  } else if (p == FINGERPRINT_NOTFOUND) {
+    Serial.println(F("Did not find a match"));
+    return p;
+  } else {
+    Serial.println(F("Unknown error"));
+    return p;
+  }   
+  
+  // found a match!
+  Serial.print(F("Found ID #")); Serial.print(finger.fingerID); 
+  Serial.print(F(" with confidence of ")); Serial.println(finger.confidence); 
+
+  return finger.fingerID;
+}
+
+// returns -1 if failed, otherwise returns ID #
+int getFingerprintIDez() {
+  uint8_t p = finger.getImage();
+  if (p != FINGERPRINT_OK)  return 0;
+
+  p = finger.image2Tz();
+  if (p != FINGERPRINT_OK){
+    return 0;
+  }
+
+  p = finger.fingerFastSearch();
+  if (p != FINGERPRINT_OK){
+    Serial.println(F("com dedo"));
+    return 0;
+  }
+  
+  /*
+  // found a match!
+  Serial.print(F("Found ID #")); Serial.print(finger.fingerID);
+  
+  Serial.print(F(" with confidence of ")); Serial.println(finger.confidence);*/
+  return finger.fingerID; 
 }
