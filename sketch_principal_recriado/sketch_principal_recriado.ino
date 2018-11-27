@@ -11,7 +11,7 @@ const PROGMEM LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 
 const PROGMEM SoftwareSerial biometricoSerial(4, 3);
 // Cria objeto "dedo" para utilizar o leitor biometrico
 const PROGMEM Adafruit_Fingerprint finger = Adafruit_Fingerprint(&biometricoSerial);
-
+int escolha;
 
 void setup() {
 
@@ -54,18 +54,26 @@ lcd.backlight();
 
 // *******************************
 
-int escolha = 0;
-
 }
 
 
 
 void loop() {
 
-  if (Serial.available() > 0) {
+  if (Serial.available()) {
     escolha = Serial.read();
-    Serial.print("I received: ");
-    Serial.println(incomingByte, DEC);
+  }
+  if (escolha == 1){
+    //entra no módulo de cadastro de aluno
+  }
+
+  if (/*detectar dedo*/){
+    //módulo de registro
+    if (/*encontrou aluno*/){
+      //registra presença
+    }else{
+      // dedo não cadastrado
+    }
   }
 
 }
