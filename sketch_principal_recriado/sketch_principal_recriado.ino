@@ -11,7 +11,11 @@ const PROGMEM LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 
 const PROGMEM SoftwareSerial biometricoSerial(4, 3);
 // Cria objeto "dedo" para utilizar o leitor biometrico
 const PROGMEM Adafruit_Fingerprint finger = Adafruit_Fingerprint(&biometricoSerial);
-int escolha;
+char escolha;
+String nomeAluno = "";
+int totalAlunosNaLista = 0;
+
+
 
 void setup() {
 
@@ -57,6 +61,9 @@ lcd.backlight();
   Serial.print("Sensor contains "); Serial.print(finger.templateCount); Serial.println(" templates");
   Serial.println("Waiting for valid finger...");
 
+  totalAlunosNaLista = contarAlunos();
+  Serial.print(F("----->>> DEBUG total alunos na lista >> "));
+  Serial.println(totalAlunosNaLista);
 
 }
 
@@ -67,9 +74,24 @@ void loop() {
   if (Serial.available()) {
     escolha = Serial.read();
   }
-  if (escolha == 1){
+  if (escolha == '1'){
     //entra no módulo de cadastro de aluno
+    escolha = Serial.read();
+    Serial.println("Digite id para cadastro: ");
+    uint8_t cadastrar;
+    char c;
+    while(1){
+      if (Serial.available()){
+        c = Serial.read(); 
+        break;
+      }
+    }
+    
+    cadastrar = atoi(c);
+    
+    getFingerprintEnroll(cadastrar);
   }
+  escolha = '0';
 
   //getFingerprintIDez();
   int temAluno = getFingerprintIDez();
@@ -78,20 +100,71 @@ void loop() {
   if (temAluno){
     //módulo de registro
     
-    Serial.print("aluno encontrado na ID: ");
-    Serial.print(temAluno);
-    Serial.println("Pode remover o dedo");
-    delay(100);
+    Serial.print(F("Aluno encontrado na ID: "));
+    Serial.println(temAluno);
+    Serial.print(F("Obrigado "));
+    Serial.println(enviaIdRetornaIndex(temAluno));
+    Serial.println(F("Pode remover o dedo"));
+    delay(1000);
     
     //registra presença
 
-    SD.open
+   // SD.open;
     
   }
   
   delay(5);   
 
 }
+int enviaIdRetornaIndex(int idParaConsulta){
+  
+  File dataFile = SD.open("lista.txt");
+  int indexAtual = 0;
+
+  while (dataFile.available()) {
+    
+    char c = dataFile.read();
+    if(c == '\n'){
+      indexAtual++;
+      
+      dataFile.seek(dataFile.position()-5); // ler a posição que atualmente se encontra 
+                                          // e voltar 5 characteres
+    
+      char tmpChar[3];
+      int cont = 0;
+    
+      while(dataFile.available()){
+        char c = dataFile.read();
+       
+        if(isDigit(c)){  
+              
+          tmpChar[cont] = c;
+          cont++;
+        
+        // converte de char para numero
+        }else if(c == '\n'){
+          tmpChar[cont] = '\0';
+          break;
+        }
+        
+     }
+    
+      uint8_t convertido = atoi(tmpChar);
+    
+      // se for o mesmo que o idParaConsulta então return
+      if (convertido == idParaConsulta){
+      
+        dataFile.close();
+        return convertido;
+      }    
+    }
+  }
+
+    
+    
+}
+
+ 
 void registra(){
 
   }
@@ -153,6 +226,7 @@ void exibeMsg(String msg){
     lcd.print(subMsg2); // delay para ficar exibindo a msg 2 segundos
   }
 }
+
 
 uint8_t getFingerprintEnroll(uint8_t idParaCadastro) {
 
@@ -417,6 +491,7 @@ int addIdAoArquivo(int indexParaCadastro,int idParaCadastro)
     char c;
     while (dataFile.available()) {
       c = dataFile.read();
+      Serial.print(c);
       if(c == '\n'){
         indexAtual = indexAtual+1;
         if (indexAtual == indexParaCadastro){
